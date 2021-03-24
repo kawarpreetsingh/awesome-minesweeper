@@ -1,0 +1,16 @@
+.Cell {
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid #B0BEC5;
+    height: 46px;
+    cursor: pointer;
+    flex: 1 0 11%;
+    margin: 1px;
+    background-color: black;
+}
+
+.Revealed {
+    background-color:#9e8a7f;
+}
+
+/* #fc543c */
