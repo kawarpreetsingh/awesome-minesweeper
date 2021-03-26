@@ -16,4 +16,4 @@ To serve the project @ http://localhost:3000/
 
 ### `npm run build`
 
-To create a build in a build folder to be deployed in any static server
+To create a build in the build folder to be deployed in any static server
