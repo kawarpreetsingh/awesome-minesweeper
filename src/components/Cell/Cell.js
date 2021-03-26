@@ -1,22 +1,23 @@
 import classes from './Cell.module.css';
 
-const cell  = ({id, data}) => {
+const cell  = ({cell, level}) => {
     let cellData = null;
     const classArr = [classes.Cell];
-    if(data.revealed){
+    classArr.push(classes[level.name]);
+    if(cell.revealed){
         classArr.push(classes.Revealed);
-        if(data.hasMine){
+        if(cell.hasMine){
             cellData = "💣";
         }
-        else if(data.neighbours !== 0){
-            cellData = data.neighbours;
+        else if(cell.neighbours !== 0){
+            cellData = cell.neighbours;
         }
     }
     else{
-        cellData = data.flagged ? "🚩" : null;
+        cellData = cell.flagged ? "🚩" : null;
     }
 
-    return <div id={id} className={classes.Cell}>{cellData}</div>
+    return <div className={classArr.join(' ')} data-row={cell.row} data-column={cell.column}>{cellData}</div>
 }
 
 export default cell;

@@ -1,109 +1,90 @@
-const getRandomValue = dimensionCount => {
+import Cell from "../models/Cell";
+import Level from "../models/Level";
+
+export const getRandomValue = dimensionCount => {
     return Math.floor((Math.random() * 1000) + 1) % dimensionCount;
 }
 
-const getEmptyBoard = (rows, columns) => {
-    let boardData = [];
-    for(let i = 0; i < rows; i++){
-        boardData.push([]);
-        for(let j = 0; j < columns; j++){
-            boardData[i][j] = {
-                row: i, 
-                column: j,
-                hasMine: false,
-                revealed: false,
-                neighbours: 0,
-                flagged: false,
-                empty: false
-            };
-        }
-    }
-    return boardData;
-}
-
-const placeMines = (boardData, rows, columns, mines) => {
-    let minesPlaced = 0, randomRow, randomColumn;
-    while(minesPlaced < mines){
-        randomRow = getRandomValue(rows);
-        randomColumn = getRandomValue(columns);
-
-        if(!(boardData[randomRow][randomColumn].hasMine)){
-            boardData[randomRow][randomColumn].hasMine = true;
-            minesPlaced++;
-        }
-    }
-}
-
-const fetchNeighbours = (row, column, boardData, rows, columns) => {
+export const fetchNeighbours = (cells, rows, columns, row, column) => {
     const neighbours = [];
-    
+
     // Top
-    if(row > 0){
-        neighbours.push(boardData[row-1][column]);
+    if (row > 0) {
+        neighbours.push(cells[row - 1][column]);
     }
 
     // Left
-    if(column > 0) {
-        neighbours.push(boardData[row][column-1]);
+    if (column > 0) {
+        neighbours.push(cells[row][column - 1]);
     }
 
     //Bottom
-    if(row < rows - 1){
-        neighbours.push(boardData[row+1][column]);
+    if (row < rows - 1) {
+        neighbours.push(cells[row + 1][column]);
     }
 
     //Right
-    if(column < columns - 1) {
-        neighbours.push(boardData[row][column+1]);
+    if (column < columns - 1) {
+        neighbours.push(cells[row][column + 1]);
     }
 
     // Top Left
-    if(row > 0 && column > 0) {
-        neighbours.push(boardData[row-1][column-1]);
+    if (row > 0 && column > 0) {
+        neighbours.push(cells[row - 1][column - 1]);
     }
 
     // Top Right
-    if(row > 0 && column < columns - 1) {
-        neighbours.push(boardData[row-1][column+1]);
+    if (row > 0 && column < columns - 1) {
+        neighbours.push(cells[row - 1][column + 1]);
     }
 
     // Bottom Left
-    if(row < rows - 1 && column > 0){
-        neighbours.push(boardData[row+1][column-1]);
+    if (row < rows - 1 && column > 0) {
+        neighbours.push(cells[row + 1][column - 1]);
     }
 
     // Bottom Right
-    if(row < rows - 1 && column < columns - 1) {
-        neighbours.push(boardData[row+1][column+1]);
+    if (row < rows - 1 && column < columns - 1) {
+        neighbours.push(cells[row + 1][column + 1]);
     }
 
     return neighbours;
 }
 
-const updateNeighbours = (boardData, rows, columns) => {
-    for(let i = 0 ; i < rows; i++){
-        for(let j = 0 ; j < columns; j++){
-            if(!boardData[i][j].hasMine){
-                let neighbourMines = 0;
-                const neighbours = fetchNeighbours(boardData[i][j].row, boardData[i][j].column, boardData, rows, columns);
-                neighbours.forEach(neighbour => {
-                    if(neighbour.hasMine){
-                        neighbourMines++;
-                    }
-                });
-                if(neighbourMines === 0){
-                    boardData[i][j].empty = true;
-                }
-                boardData[i][j].neighbours = neighbourMines;
+export const revealEmptyCells = (cells, rows, columns, row, column) => {
+    const neighbours = fetchNeighbours(cells, rows, columns, row, column);
+    neighbours.forEach(neighbour => {
+        if (!neighbour.revealed && !neighbour.flagged && (!neighbour.hasMine || neighbour.empty)) {
+            cells[neighbour.row][neighbour.column].revealed = true;
+            if (neighbour.empty) {
+                revealEmptyCells(cells, rows, columns, neighbour.row, neighbour.column);
             }
         }
-    }
+    });
 }
 
-export const getBoardData = (rows, columns, mines) => {
-    let boardData = getEmptyBoard(rows, columns);
-    placeMines(boardData, rows, columns, mines);
-    updateNeighbours(boardData, rows, columns);
+export const revealAllCells = cells => {
+    cells.forEach(cellsRow => cellsRow.forEach(cell => cell.revealed = true));
+}
 
-    return boardData;
+export const getDesiredCells = (cells, desiredFeature) => {
+    let desiredCells = [];
+    cells.forEach(cellsRow => {
+        cellsRow.forEach(cell => {
+            if ((desiredFeature === 'mines' && cell.hasMine) || 
+                (desiredFeature === 'flags' && cell.flagged) ||
+                (desiredFeature === 'hidden' && !cell.revealed)) {
+                desiredCells.push(cell);
+            }
+        });
+    });
+    return desiredCells;
+}
+
+export const generateCellsCopy = cells => {
+    return cells.map(cellsRow => cellsRow.map(cell => new Cell(cell.row, cell.column, cell.hasMine, cell.revealed, cell.neighbours, cell.flagged, cell.empty)));
+}
+
+export const generateLevelCopy = level => {
+    return new Level(level.name, level.rows, level.columns, level.mines);
 }

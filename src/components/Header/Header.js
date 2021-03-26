@@ -1,16 +1,24 @@
-import {LEVELS} from '../../shared/constant';
+import { LEVELS } from '../../shared/constants';
 
-const header  = ({onLevelChange, mines}) => {
+import classes from './Header.module.css';
+
+const header = ({ onLevelChange, flags, statusMessage }) => {
     const options = LEVELS && LEVELS.length ? LEVELS.map(level => (
-        <option value={level.id} key={level.id}>{level.name}</option>
+        <option value={level.name} key={level.name}>{level.name}</option>
     )) : null;
     return (
-        <div>
-            <select onChange={onLevelChange}>
-                {options}
-            </select>
+        <div className={classes.Header}>
             <div>
-                Mines : {mines}
+                <span>Level </span>
+                <select onChange={onLevelChange}>
+                    {options}
+                </select>
+            </div>
+            <div>
+                {statusMessage}
+            </div>
+            <div>
+                🚩 {flags}
             </div>
         </div>
     );
