@@ -4,7 +4,7 @@ import Toolbar from '../../components/Toolbar/Toolbar';
 import Board from '../../components/Board/Board';
 import Card from '../../components/UI/Card/Card';
 
-import { LEVELS, STATUS_MESSAGES } from '../../shared/constants';
+import { LEVELS, STATUS_MESSAGES } from '../../shared/constant';
 import { generateCells } from '../../shared/board';
 import { revealAllCells, generateCellsCopy, revealCellsUntilNonEmpty, getDesiredCells, generateLevelCopy } from '../../shared/utility';
 

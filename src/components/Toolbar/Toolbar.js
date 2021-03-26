@@ -1,4 +1,4 @@
-import { LEVELS } from '../../shared/constants';
+import { LEVELS } from '../../shared/constant';
 
 import refreshIcon from '../../assets/images/refresh.png';
 
