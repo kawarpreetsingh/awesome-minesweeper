@@ -1,3 +1,4 @@
+// Cell model
 class Cell {
     constructor(row, column, hasMine = false, revealed = false, neighbours = 0, flagged = false, empty = false){
         this.row = row;

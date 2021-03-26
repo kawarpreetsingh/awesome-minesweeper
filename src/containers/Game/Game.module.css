@@ -1,24 +1,26 @@
 .Game {
     padding: 20px;
-    margin-top: 10vh;
     background: #B0BEC5;
-    border-radius: 5px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    margin: 10px auto;
 }
 
+/* Styling for easy level */
 .Easy {
-    width: 400px;
-    height: 435px;
+    width: 393px;
+    height: 434px;
 }
 
+/* Styling for medium level */
 .Medium {
-    width: 456px;
-    height: 492px;
+    width: 445px;
+    height: 485px;
 }
 
+/* Styling for hard level */
 .Hard {
-    width: 480px;
-    height: 512px;
+    width: 465px;
+    height: 504px;
 }

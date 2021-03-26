@@ -1,6 +1,11 @@
 import Cell from '../models/Cell';
 import { getRandomValue, fetchNeighbours } from './utility';
 
+/*
+    This file contain the logic for board which is used by the components
+*/
+
+// Create Empty cells
 const getEmptyCells = (rows, columns) => {
     let cells = [];
     for(let i = 0; i < rows; i++){
@@ -12,6 +17,7 @@ const getEmptyCells = (rows, columns) => {
     return cells;
 }
 
+// Place mines randomly
 const placeMines = (cells, rows, columns, mines) => {
     let minesPlaced = 0, randomRow, randomColumn;
     while(minesPlaced < mines){
@@ -25,6 +31,7 @@ const placeMines = (cells, rows, columns, mines) => {
     }
 }
 
+// Update the neighbour cells after mines are placed
 const updateNeighbours = (cells, rows, columns) => {
     for(let i = 0 ; i < rows; i++){
         for(let j = 0 ; j < columns; j++){
@@ -45,6 +52,7 @@ const updateNeighbours = (cells, rows, columns) => {
     }
 }
 
+// Exported function which generates the cells in the board based upon dynamic rows, columns and mines
 export const generateCells = (rows, columns, mines) => {
     let cells = getEmptyCells(rows, columns);
     placeMines(cells, rows, columns, mines);

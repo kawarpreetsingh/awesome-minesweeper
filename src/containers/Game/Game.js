@@ -1,32 +1,41 @@
 import { useState } from 'react';
 
-import Header from '../../components/Header/Header';
+import Toolbar from '../../components/Toolbar/Toolbar';
 import Board from '../../components/Board/Board';
+import Card from '../../components/UI/Card/Card';
 
 import { LEVELS, STATUS_MESSAGES } from '../../shared/constants';
 import { generateCells } from '../../shared/board';
-import { revealAllCells, generateCellsCopy, revealEmptyCells, getDesiredCells, generateLevelCopy } from '../../shared/utility';
+import { revealAllCells, generateCellsCopy, revealCellsUntilNonEmpty, getDesiredCells, generateLevelCopy } from '../../shared/utility';
 
 import classes from './Game.module.css';
 
+// The only stateful component in the app managing the state
 const Game = () => {
 
+    // State for level
     const [level, setLevel] = useState(generateLevelCopy(LEVELS[0]));
 
+    // State for remaining flag count
     const [flags, setFlags] = useState(level.mines);
 
+    // State for total cells in the board
     const [cells, setCells] = useState(generateCells(level.rows, level.columns, level.mines));
 
+    // State for current status in the game
     const [statusMessage, setStatusMessage] = useState(STATUS_MESSAGES.new);
 
+    // Restarts the game based upon the chosen level
     const levelChangedHandler = event => {
         const foundLevel = LEVELS.find(level => level.name === event.target.value);
-        const newLevel = generateLevelCopy(foundLevel);
+        const newLevel = foundLevel ? generateLevelCopy(foundLevel) : level;
         setLevel(newLevel);
         setFlags(newLevel.mines);
         setCells(generateCells(newLevel.rows, newLevel.columns, newLevel.mines));
+        setStatusMessage(STATUS_MESSAGES.new);
     };
 
+    // Handles left click efficiently by using event delegation and datasets
     const leftClickedHandler = event => {
         if ('row' in event.target.dataset && 'column' in event.target.dataset) {
             const row = +event.target.dataset.row;
@@ -35,8 +44,12 @@ const Game = () => {
 
             if (cell.revealed || cell.flagged) return;
             
-            const updatedCells = generateCellsCopy(cells);
-            
+            const updatedCells = generateCellsCopy(cells); // To avoid state mutation
+
+            if(statusMessage === STATUS_MESSAGES.new){
+                setStatusMessage(STATUS_MESSAGES.inProgress);
+            }
+
             if (cell.hasMine) {
                 revealAllCells(updatedCells);
                 setStatusMessage(STATUS_MESSAGES.lost);
@@ -47,7 +60,7 @@ const Game = () => {
             updatedCell.revealed = true;
 
             if (updatedCell.empty) {
-                revealEmptyCells(updatedCells, level.rows, level.columns, row, column);
+                revealCellsUntilNonEmpty(updatedCells, level.rows, level.columns, row, column);
             }
 
             if (getDesiredCells(updatedCells, 'hidden').length === flags) {
@@ -56,13 +69,11 @@ const Game = () => {
                 setStatusMessage(STATUS_MESSAGES.won);
             }
 
-            if(statusMessage === STATUS_MESSAGES.new){
-                setStatusMessage(STATUS_MESSAGES.inProgress);
-            }
             setCells(updatedCells);
         }
     }
 
+    // Handles right click efficiently by using event delegation and datasets
     const rightClickedHandler = event => {
         event.preventDefault(); // prevents default browser right click
         if ('row' in event.target.dataset && 'column' in event.target.dataset) {
@@ -72,7 +83,7 @@ const Game = () => {
 
             if(cell.revealed) return;
 
-            const updatedCells = generateCellsCopy(cells);
+            const updatedCells = generateCellsCopy(cells); // To avoid state mutation
             const updatedCell = updatedCells[row][column];
             let updatedFlags = flags;
 
@@ -85,6 +96,10 @@ const Game = () => {
                 updatedFlags--;
             }
 
+            if(statusMessage === STATUS_MESSAGES.new){
+                setStatusMessage(STATUS_MESSAGES.inProgress);
+            }
+
             if(updatedFlags === 0){
                 const mineCellsArray = getDesiredCells(updatedCells, 'mines');
                 const flagCellsArray = getDesiredCells(updatedCells, 'flags');
@@ -95,22 +110,19 @@ const Game = () => {
                 }
             }
 
-            if(statusMessage === STATUS_MESSAGES.new){
-                setStatusMessage(STATUS_MESSAGES.inProgress);
-            }
             setFlags(updatedFlags);
             setCells(updatedCells);
         }
     }
 
-    const classArr = [classes.Game];
-    classArr.push(classes[level.name]);
+    const classArray = [classes.Game];
+    classArray.push(classes[level.name]);
 
     return (
-        <div className={classArr.join(' ')}>
-            <Header onLevelChange={levelChangedHandler} flags={flags} statusMessage={statusMessage}/>
+        <Card className={classArray}>
+            <Toolbar onLevelChange={levelChangedHandler} flags={flags} statusMessage={statusMessage}/>
             <Board cells={cells} leftClick={leftClickedHandler} rightClick={rightClickedHandler} level={level}/>
-        </div>
+        </Card>
     );
 }
 

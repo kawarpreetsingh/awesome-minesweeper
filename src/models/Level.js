@@ -1,3 +1,4 @@
+//  Level model
 class Level {
     constructor(name, rows, columns, mines){
         this.name = name;

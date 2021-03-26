@@ -1,23 +1,36 @@
+import Card from '../UI/Card/Card';
+
 import classes from './Cell.module.css';
 
-const cell  = ({cell, level}) => {
+// The individual cell in the board
+const Cell = ({ cell, level }) => {
     let cellData = null;
-    const classArr = [classes.Cell];
-    classArr.push(classes[level.name]);
-    if(cell.revealed){
-        classArr.push(classes.Revealed);
-        if(cell.hasMine){
+    const classArray = [classes.Cell];
+    classArray.push(classes[level.name]);
+    if (cell.revealed) {
+        classArray.push(classes.Revealed);
+        if (cell.hasMine) {
             cellData = "💣";
         }
-        else if(cell.neighbours !== 0){
+        else if (cell.neighbours !== 0) {
             cellData = cell.neighbours;
         }
     }
-    else{
+    else {
         cellData = cell.flagged ? "🚩" : null;
     }
 
-    return <div className={classArr.join(' ')} data-row={cell.row} data-column={cell.column}>{cellData}</div>
+    return (
+        <Card>
+            <div 
+                data-row={cell.row} // Data sets used to achieve event delegation
+                data-column={cell.column}
+                className={classArray.join(' ')}
+            >
+                {cellData}
+            </div>
+        </Card>
+    );
 }
 
-export default cell;
+export default Cell;

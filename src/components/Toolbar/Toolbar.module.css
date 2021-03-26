@@ -1,0 +1,18 @@
+.Toolbar {
+    display: flex;
+    justify-content: space-between;
+}
+
+.RefreshIcon {
+    width: 6%;
+}
+
+.RefreshIcon img {
+    width: 100%;
+    cursor: pointer;
+}
+
+.LevelSelector select{
+    border-radius: 4px;
+    height: 22px;
+}

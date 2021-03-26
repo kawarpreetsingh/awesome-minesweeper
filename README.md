@@ -1,6 +1,6 @@
 # Getting Started 
 
-An awesome minesweeper game created in love with React by Kawarpreet Singh.
+The awesome minesweeper game is created in love with React by Kawarpreet Singh.
 ## Available Scripts
 
 1. Extract the zip file
